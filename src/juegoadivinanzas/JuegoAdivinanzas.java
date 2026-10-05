@@ -15,8 +15,7 @@ public class JuegoAdivinanzas {
         final var INTENTOS_MAXIMOS = 5;
 
         while (adivinanza != numeroSecreto && intentos < INTENTOS_MAXIMOS) {
-            System.out.print("Adivina el numero secreto (1 - 50): ");
-            adivinanza = consola.nextInt();
+            adivinanza = leerNumero(consola);
 
             // Agregar una ayuda para orientar al jugador
             if (adivinanza < numeroSecreto) {
@@ -35,6 +34,18 @@ public class JuegoAdivinanzas {
         } else {
             System.out.printf("Lo siento, has agotado tus intentos maximos: %d%n", INTENTOS_MAXIMOS);
             System.out.printf("El numero secreto era: %d%n", numeroSecreto);
+        }
+    }
+
+    // Validación de entrada para evitar errores de texto
+    private static int leerNumero(Scanner consola) {
+        System.out.print("Adivina el numero secreto (1 - 50): ");
+        while (true) {
+            try {
+                return Integer.parseInt(consola.nextLine().trim());
+            } catch (NumberFormatException e) {
+                System.out.print("Entrada invalida, ingresa un numero entero: ");
+            }
         }
     }
 }
