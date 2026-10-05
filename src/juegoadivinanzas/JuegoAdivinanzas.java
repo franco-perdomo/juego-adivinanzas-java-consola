@@ -1,4 +1,5 @@
 package juegoadivinanzas;
+
 import java.util.Random;
 import java.util.Scanner;
 
@@ -10,42 +11,32 @@ public class JuegoAdivinanzas {
 
     public static void main(String[] args) {
         System.out.println("*** Juego de Adivinanzas ***");
-        var consola = new Scanner(System.in);
-        var random = new Random();
 
-        // Generamos un número aleatorio entre 1 y 50
-        var numeroSecreto = random.nextInt(MAXIMO - MINIMO + 1) + MINIMO;
-        var intentos = 0;
-        var adivinanza = 0;
+        // Cierra el Scanner automáticamente.
+        try (var consola = new Scanner(System.in)) {
 
-        while (adivinanza != numeroSecreto && intentos < INTENTOS_MAXIMOS) {
-            adivinanza = leerNumero(consola);
-            // Si está fuera de rango, avisamos y no cuenta como intento
-            if (adivinanza < MINIMO || adivinanza > MAXIMO) {
-                System.out.printf("Ingresa un numero entre %d y %d%n", MINIMO, MAXIMO);
-                continue;
+            int numeroSecreto = new Random().nextInt(MAXIMO - MINIMO + 1) + MINIMO;
+            int intentos = 0;
+            int adivinanza = 0;
+
+            while (adivinanza != numeroSecreto && intentos < INTENTOS_MAXIMOS) {
+                adivinanza = leerNumero(consola);
+
+                // "continue" evita que un número fuera de rango gaste un intento.
+                if (adivinanza < MINIMO || adivinanza > MAXIMO) {
+                    System.out.printf("Ingresa un numero entre %d y %d%n", MINIMO, MAXIMO);
+                    continue;
+                }
+
+                intentos++;
+                mostrarPista(adivinanza, numeroSecreto);
             }
-            // Agregar una ayuda para orientar al jugador
-            if (adivinanza < numeroSecreto) {
-                System.out.println("El numero secreto es mayor");
-            } else if (adivinanza > numeroSecreto) {
-                System.out.println("El numero secreto es menor");
-            }
 
-            // Incrementamos la variable de intentos
-            intentos++;
-        }
-
-        // Conclusion del juego
-        if (adivinanza == numeroSecreto) {
-            System.out.printf("Felicidades, adivinaste el numero secreto en %d intentos%n", intentos);
-        } else {
-            System.out.printf("Lo siento, has agotado tus intentos maximos: %d%n", INTENTOS_MAXIMOS);
-            System.out.printf("El numero secreto era: %d%n", numeroSecreto);
+            mostrarResultado(adivinanza == numeroSecreto, intentos, numeroSecreto);
         }
     }
 
-    // Validación de entrada para evitar errores de texto
+    // Repite la lectura hasta recibir un entero válido, en vez de cerrar con error.
     private static int leerNumero(Scanner consola) {
         System.out.printf("Adivina el numero secreto (%d - %d): ", MINIMO, MAXIMO);
         while (true) {
@@ -54,6 +45,23 @@ public class JuegoAdivinanzas {
             } catch (NumberFormatException e) {
                 System.out.print("Entrada invalida, ingresa un numero entero: ");
             }
+        }
+    }
+
+    private static void mostrarPista(int adivinanza, int numeroSecreto) {
+        if (adivinanza < numeroSecreto) {
+            System.out.println("El numero secreto es mayor");
+        } else if (adivinanza > numeroSecreto) {
+            System.out.println("El numero secreto es menor");
+        }
+    }
+
+    private static void mostrarResultado(boolean acerto, int intentos, int numeroSecreto) {
+        if (acerto) {
+            System.out.printf("Felicidades, adivinaste el numero secreto en %d intentos%n", intentos);
+        } else {
+            System.out.printf("Lo siento, has agotado tus intentos maximos: %d%n", INTENTOS_MAXIMOS);
+            System.out.printf("El numero secreto era: %d%n", numeroSecreto);
         }
     }
 }
